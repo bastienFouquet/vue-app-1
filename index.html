@@ -2,24 +2,87 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Pokédex</title>
-    <style>
-        [v-cloak] {
-            display: none;
-        }
-    </style>
+    <title>Pokedex</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.2/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script type="text/x-template" id="modal-template">
+        <transition name="modal">
+            <div class="modal-mask">
+                <div class="modal-wrapper">
+                    <div class="modal-container">
+                        <div class="close-button cursor-pointer" @click="$emit('close')">
+                            <img src="assets/icons/times-circle-solid.svg" width="30" alt="Close">
+                        </div>
+                        <div class="modal-header">
+                            <h3>{{pokemon.name | capitalize}}</h3>
+                        </div>
+                        <div class="modal-body">
+                            <div class="container">
+                                <div class="img-container">
+                                    <img :src="formatURL(pokemon.id)" width="300" :alt="pokemon.name">
+                                    <div class="number">{{pokemon.id | formatId}}</div>
+                                </div>
+                                <div class="pokemon-profile">
+                                    <div class="info">Type : {{pokemon.types[0].type.name}}</div>
+                                    <div class="info">Height : {{pokemon.height}}</div>
+                                    <div class="info">Weight : {{pokemon.weight}}</div>
+                                </div>
+                            </div>
+                            <div class="divider">
+                                <div class="column">
+                                    <h4>Abilities</h4>
+                                    <div v-for="(ability, i) in pokemon.abilities" :key="i">
+                                        {{ability?.ability?.name}}
+                                    </div>
+                                </div>
+                                <div class="column">
+                                    <h4>Moves</h4>
+                                    <div v-for="(move, i) in pokemon.moves" :key="i">
+                                        {{move?.move?.name}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </transition>
+    </script>
 </head>
 <body>
-<div id="main">
+<div id="main" v-cloak>
+    <h1>Pokedex</h1>
+    <div class="container" v-if="!loading">
+        <img v-if="page > 1"
+             src="assets/icons/arrow-circle-left-solid.svg" width="60"
+             class="navigation-button hvr-pulse-grow cursor-pointer" alt="Previous"
+             @click="previous">
+        <div class="poke-container">
+            <div class="pokemon hvr-bob cursor-pointer"
+                 v-for="(pokemon, i) in detailedPokemons" :key="i"
+                 @click="selectPokemon(pokemon); showModal = true">
+                <div class="img-container">
+                    <img :src="formatURL(pokemon.id)" :alt="pokemon.name">
+                </div>
+                <div class="info">Type : {{pokemon.types[0].type.name}}</div>
+                <div class="number">{{pokemon.id | formatId}}</div>
+                <div class="name">{{pokemon.name | capitalize}}</div>
+            </div>
+        </div>
+        <img src="assets/icons/arrow-circle-right-solid.svg" width="60"
+             class="navigation-button hvr-pulse-grow cursor-pointer" alt="Next"
+             @click="next">
+    </div>
+    <div v-else class="container">
+        <img src="assets/icons/loading.svg" width="250" alt="Loading">
+    </div>
 
+    <modal v-if="showModal" @close="showModal = false" :pokemon="pokemon"></modal>
 </div>
-
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.0.5/vue.min.js"></script>
-<script>
-    const app = new Vue({
-        el: '#main',
-    })
-</script>
+<script src="mixin.js"></script>
+<script src="modal.js"></script>
+<script src="main.js"></script>
 </body>
 </html>
