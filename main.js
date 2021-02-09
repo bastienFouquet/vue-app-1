@@ -12,11 +12,12 @@ const app = new Vue({
     watch: {
         limit: 'getPokemons',
         offset: 'getPokemons',
-        pokemons: ['getDetails', 'toggleLoad'],
+        pokemons: ['getDetails'],
     },
     methods: {
         getPokemons: async function () {
             try {
+                this.loading = true;
                 const response = await axios.get(apiURL + 'pokemon?offset=' + this.offset + '&limit=' + this.limit);
                 this.pokemons = response.data;
             } catch (e) {
@@ -31,6 +32,7 @@ const app = new Vue({
                     response.data.name = pokemon.name;
                     this.detailedPokemons.push(response.data);
                 }
+                this.loading = false;
             } catch (e) {
                 console.log(e);
             }
@@ -53,8 +55,8 @@ const app = new Vue({
             this.pokemon = pokemon;
         }
     },
-    created: function () {
-        this.getPokemons();
+    created: async function () {
+        await this.getPokemons();
     },
     computed: {
         offset: function () {
