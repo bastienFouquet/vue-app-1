@@ -45,12 +45,6 @@ const app = new Vue({
         next: function () {
             ++this.page;
         },
-        toggleLoad: function () {
-            this.loading = true;
-            setTimeout(() => {
-                this.loading = false;
-            }, 200);
-        },
         selectPokemon: function (pokemon) {
             this.pokemon = pokemon;
         }
